@@ -22,7 +22,7 @@ func (s Schedule) MarshalJSON() ([]byte, error) {
 		Time          string `json:"time"`
 		*Alias
 	}{
-		StartDateTime: s.StartDateTime.Format(timeFormat),
+		StartDateTime: s.StartDateTime.Format(time.RFC3339),
 		Time:          s.Time.Format(timeFormat),
 		Alias:         (*Alias)(&s),
 	}
@@ -42,13 +42,11 @@ func (s *Schedule) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if aux.StartDateTime != "" {
-		startDateTime, err := time.Parse(timeFormat, aux.StartDateTime)
-		if err != nil {
-			return err
-		}
-		s.StartDateTime = startDateTime
+	startDateTime, err := time.Parse(time.RFC3339, aux.StartDateTime)
+	if err != nil {
+		return err
 	}
+	s.StartDateTime = startDateTime
 
 	if aux.Time != "" {
 		time, err := time.Parse(timeFormat, aux.Time)
